@@ -1,3 +1,10 @@
+int rightTurn=0;
+int leftTurn=0;
+int frontTurn=0;
+int backTurn=0;
+int bottomTurn=0;
+int topTurn=0;
+
 /*
  * 
  * 
@@ -32,14 +39,16 @@
 #define PIN            11
 
 // How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS      1
+#define NUMPIXELS      24
 #define SWITCH 0
 // When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
 // Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
 // example for more information on possible values.
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 // an array to keep track of the colors.
-char cube[] ={'r', 'r', 'r', 'w', 'w', 'w', 'w', 'o',  'y', 'y', 'y', 'y', 'o','o', 'g', 'g', 'g', 'g', 'o', 'b', 'b', 'b', 'b'};
+char cube[] ={'r', 'r', 'r', 'r', 'w', 'w', 'w', 'w', 'o',  'y', 'y', 'y', 'y', 'o','o', 'g', 'g', 'g', 'g', 'o', 'b', 'b', 'b', 'b'};
+//char cube[] ={'o', 'o', 'y', 'y', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r','r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r','r'};
+
 // pins for the switches
 const int rightPin=3;
 const int leftPin=4;
@@ -60,18 +69,30 @@ void setup() {
   pinMode(backPin, INPUT);
   pinMode(topPin, INPUT);
   pinMode(bottomPin, INPUT);
+  Serial.begin(9600);
   
 }
 
 void loop() {
   
   // read the buttons
-  int rightTurn=digitalRead(rightPin);
+  //int rightTurn=digitalRead(rightPin);
   int leftTurn=digitalRead(leftPin);
   int frontTurn=digitalRead(frontPin);
-  int backTurn=digitalRead(backPin);
-  int bottomTurn=digitalRead(bottomPin);
+  
+  //int backTurn=digitalRead(backPin);
+  //int bottomTurn=digitalRead(bottomPin);
   int topTurn=digitalRead(topPin);
+  
+  Serial.print("front: ");
+  Serial.println(frontTurn);
+  
+  Serial.print("left: ");
+  Serial.println(leftTurn);
+  
+  Serial.print("top: ");
+  Serial.println(topTurn);
+  Serial.println(cube);
   // determine if a button pressed
   if (rightTurn==HIGH){
     twistRight();   
@@ -94,12 +115,13 @@ void loop() {
   // Show the lights
   displayCube();
   // debounce
-  delay(200);
+  delay(300);
 }
 
 // code to twist a cube on the left all twist codes work the same way. It shuffles the values of cube, and then string copies it 
 // back to cube. (arduino is tough with arrays).
 void twistLeft(){
+   delay(200);
   // this is the shuffle that completes this move.
   char shuffle[]={1, 6, 7, 4, 5, 15, 20, 8, 9, 10, 11, 12, 13, 14, 21, 19, 16, 17, 18, 22, 2, 3, 23, 24};
   // a new array to hold the shuffled cube
@@ -111,6 +133,7 @@ void twistLeft(){
   }
   // copy back to cube.
   strcpy(cube, returnArray);
+  delay(300);
 }
 
 void twistRight(){
@@ -123,12 +146,14 @@ void twistRight(){
 }
 
 void twistTop(){
+  delay(200);
   char shuffle[]={1, 2, 11, 10, 8, 5, 6, 7, 16, 15, 9, 12, 13, 14, 17, 3, 4, 18, 19, 20, 21, 22, 23, 24};
   char returnArray[24];
   for (int i=0; i<NUMPIXELS; i++){
     returnArray[i]=cube[shuffle[i]-1];
   }
   strcpy(cube, returnArray);
+  delay(300);
 }
 
 void twistBottom(){
@@ -141,12 +166,22 @@ void twistBottom(){
 }
 
 void twistFront(){
-  char shuffle[]={2, 3, 4, 1, 12, 11, 7, 8, 9, 10, 23, 22, 13, 14, 15, 16, 5, 6, 29, 20, 21, 12, 17, 24};
+  delay(200);
+  char shuffle[]={2, 3, 4, 1, 12, 11, 7, 8, 9, 10, 23, 22, 13, 14, 15, 16, 5, 6, 19, 20, 21, 17, 18, 24};
+  //char shuffle[]={ 24, 2, 3, 4,  5,  6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 1};
+  
   char returnArray[24];
+  //Serial.print("cube");
+  //Serial.println(cube);
   for (int i=0; i<NUMPIXELS; i++){
     returnArray[i]=cube[shuffle[i]-1];
   }
+  //Serial.print("return cube:");
+  //Serial.println(returnArray);
+  //Serial.println(sizeof(returnArray));
   strcpy(cube, returnArray);
+  //Serial.println(sizeof(cube));
+  delay(400);
 }
 
 void twistBack(){
@@ -170,15 +205,15 @@ void cubeSetPixelColor(char color, int num){
   // nice time to use a switch... If it works.
   switch (color){
     case 'r':
-    pixels.setPixelColor(num, pixels.Color(255,0,0));
+    pixels.setPixelColor(num, pixels.Color(0,125,0)); //fixed
     break;
 
     case 'o':
-    pixels.setPixelColor(num, pixels.Color(255,165,0));
+    pixels.setPixelColor(num, pixels.Color(0, 125 ,125));
     break;
 
     case 'w':
-    pixels.setPixelColor(num-1, pixels.Color(255,255,255));
+    pixels.setPixelColor(num, pixels.Color(255,255,255));
     break;
 
     case 'y':
@@ -186,11 +221,11 @@ void cubeSetPixelColor(char color, int num){
     break;
 
     case 'g':
-    pixels.setPixelColor(num, pixels.Color(0,255,0));
+    pixels.setPixelColor(num, pixels.Color(125,0,0));
     break;
 
     case 'b':
-    pixels.setPixelColor(num, pixels.Color(0,0,255));
+    pixels.setPixelColor(num, pixels.Color(0,0,125));
     break;
   }
 }
