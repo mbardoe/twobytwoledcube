@@ -36,7 +36,7 @@ int topTurn=0;
 
 // Which pin on the Arduino is connected to the NeoPixels?
 // On a Trinket or Gemma we suggest changing this to 1
-#define PIN            11
+#define PIN            10
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS      24
@@ -63,12 +63,12 @@ void setup() {
   // start the pixels
   pixels.begin(); // This initializes the NeoPixel library.
   // start the pins.
-  pinMode(rightPin, INPUT);
-  pinMode(leftPin, INPUT);
-  pinMode(frontPin, INPUT);
-  pinMode(backPin, INPUT);
-  pinMode(topPin, INPUT);
-  pinMode(bottomPin, INPUT);
+//  pinMode(rightPin, INPUT);
+//  pinMode(leftPin, INPUT);
+//  pinMode(frontPin, INPUT);
+//  pinMode(backPin, INPUT);
+//  pinMode(topPin, INPUT);
+//  pinMode(bottomPin, INPUT);
   Serial.begin(9600);
   
 }
@@ -76,22 +76,22 @@ void setup() {
 void loop() {
   
   // read the buttons
-  //int rightTurn=digitalRead(rightPin);
-  int leftTurn=digitalRead(leftPin);
-  int frontTurn=digitalRead(frontPin);
-  
-  //int backTurn=digitalRead(backPin);
-  //int bottomTurn=digitalRead(bottomPin);
-  int topTurn=digitalRead(topPin);
-  
-  Serial.print("front: ");
-  Serial.println(frontTurn);
-  
-  Serial.print("left: ");
-  Serial.println(leftTurn);
-  
-  Serial.print("top: ");
-  Serial.println(topTurn);
+//  //int rightTurn=digitalRead(rightPin);
+//  int leftTurn=digitalRead(leftPin);
+//  int frontTurn=digitalRead(frontPin);
+//  
+//  //int backTurn=digitalRead(backPin);
+//  //int bottomTurn=digitalRead(bottomPin);
+//  int topTurn=digitalRead(topPin);
+//  
+//  Serial.print("front: ");
+//  Serial.println(frontTurn);
+//  
+//  Serial.print("left: ");
+//  Serial.println(leftTurn);
+//  
+//  Serial.print("top: ");
+//  Serial.println(topTurn);
   Serial.println(cube);
   // determine if a button pressed
   if (rightTurn==HIGH){
