@@ -32,6 +32,18 @@ int topTurn=0;
 #include "Adafruit_BluefruitLE_UART.h"
 
 #include "BluefruitConfig.h"
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+  #include <avr/power.h>
+#endif
+
+// Which pin on the Arduino is connected to the NeoPixels?
+// On a Trinket or Gemma we suggest changing this to 1
+#define PIN            10
+
+// How many NeoPixels are attached to the Arduino?
+#define NUMPIXELS      24
+#define SWITCH 0
 /*=========================================================================
     APPLICATION SETTINGS
 
@@ -133,18 +145,7 @@ extern uint8_t packetbuffer[];
  */// NeoPixel Ring simple sketch (c) 2013 Shae Erisson
 // released under the GPLv3 license to match the rest of the AdaFruit NeoPixel library
 
-#include <Adafruit_NeoPixel.h>
-#ifdef __AVR__
-  #include <avr/power.h>
-#endif
 
-// Which pin on the Arduino is connected to the NeoPixels?
-// On a Trinket or Gemma we suggest changing this to 1
-#define PIN            10
-
-// How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS      24
-#define SWITCH 0
 // When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
 // Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
 // example for more information on possible values.
@@ -234,7 +235,7 @@ void setup() {
 //  pinMode(topPin, INPUT);
 //  pinMode(bottomPin, INPUT);
 //  Serial.begin(9600);
-displayCube();
+displayCube(cube);
   
 }
 
@@ -262,7 +263,8 @@ void loop() {
 //  }
 //  else if (leftTurn==HIGH){
     twistFront();
-    displayCube();
+    Serial.println("HERE");
+    displayCube(cube);
   }
   }
 //  else if (frontTurn==HIGH){
@@ -278,7 +280,7 @@ void loop() {
 //    twistTop();
 //  }
   // Show the lights
-//  displayCube();
+//  displayCube(cube);
   // debounce
 //  delay(300);
 
@@ -322,7 +324,7 @@ void loop() {
 //    twistTop();
 //  }
 //  // Show the lights
-//  displayCube();
+//  displayCube(cube);
 //  // debounce
 //  delay(300);
 }
@@ -346,7 +348,7 @@ void twistLeft(){
 }
 
 void twistRight(){
-  char shuffle[]={5, 2, 3, 8, 9, 6, 7, 14, 24, 13, 10, 11, 12, 23, 15, 16, 17, 18, 19, 20, 21, 22, 1, 4};
+  int shuffle[]={5, 2, 3, 8, 9, 6, 7, 14, 24, 13, 10, 11, 12, 23, 15, 16, 17, 18, 19, 20, 21, 22, 1, 4};
   char returnArray[24];
   for (int i=0; i<NUMPIXELS; i++){
     returnArray[i]=cube[shuffle[i]-1];
@@ -356,7 +358,7 @@ void twistRight(){
 
 void twistTop(){
   delay(200);
-  char shuffle[]={1, 2, 11, 10, 8, 5, 6, 7, 16, 15, 9, 12, 13, 14, 17, 3, 4, 18, 19, 20, 21, 22, 23, 24};
+  int shuffle[]={1, 2, 11, 10, 8, 5, 6, 7, 16, 15, 9, 12, 13, 14, 17, 3, 4, 18, 19, 20, 21, 22, 23, 24};
   char returnArray[24];
   for (int i=0; i<NUMPIXELS; i++){
     returnArray[i]=cube[shuffle[i]-1];
@@ -366,7 +368,7 @@ void twistTop(){
 }
 
 void twistBottom(){
-  char shuffle[]={13, 12, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 20, 19, 15, 16, 17, 1, 2, 18, 22, 23, 24, 21};
+  int shuffle[]={13, 12, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 20, 19, 15, 16, 17, 1, 2, 18, 22, 23, 24, 21};
   char returnArray[24];
   for (int i=0; i<NUMPIXELS; i++){
     returnArray[i]=cube[shuffle[i]-1];
@@ -376,7 +378,7 @@ void twistBottom(){
 
 void twistFront(){
   //delay(200);
-  char shuffle[]={2, 3, 4, 1, 12, 11, 7, 8, 9, 10, 23, 22, 13, 14, 15, 16, 5, 6, 19, 20, 21, 17, 18, 24};
+  int shuffle[]={2, 3, 4, 1, 12, 11, 7, 8, 9, 10, 23, 22, 13, 14, 15, 16, 5, 6, 19, 20, 21, 17, 18, 24};
   //char shuffle[]={ 24, 2, 3, 4,  5,  6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 1};
   
   char returnArray[24];
@@ -384,18 +386,19 @@ void twistFront(){
   Serial.println(cube);
   for (int i=0; i<NUMPIXELS; i++){
     returnArray[i]=cube[shuffle[i]-1];
+    Serial.println(returnArray[i]);
   }
   Serial.print("return cube:");
-  Serial.println(returnArray);
-  Serial.println(sizeof(returnArray));
+  //Serial.println(returnArray);
+  //Serial.println(sizeof(returnArray));
   strcpy(cube, returnArray);
-  Serial.println(sizeof(cube));
+  //Serial.println(cube);
   //delay(400);
 }
 
 void twistBack(){
   // this is the shuffle that completes this move
-  char shuffle[]={1, 2, 3, 4, 5, 6, 10, 13, 14, 24, 11, 12, 21, 20, 9, 8, 17, 18, 7, 15, 16, 22, 23, 19};
+  int shuffle[]={1, 2, 3, 4, 5, 6, 10, 13, 14, 24, 11, 12, 21, 20, 9, 8, 17, 18, 7, 15, 16, 22, 23, 19};
   char returnArray[24];
   for (int i=0; i<NUMPIXELS; i++){
     returnArray[i]=cube[shuffle[i]-1];
@@ -403,9 +406,13 @@ void twistBack(){
   strcpy(cube, returnArray);
 }
 
-void displayCube(){
+void displayCube(char ncube[]){
   for (int i=0;i<24;i++){
-    cubeSetPixelColor(cube[i],i);
+    cubeSetPixelColor(ncube[i],i);
+    Serial.print("Setting ");
+    Serial.print(i);
+    Serial.print(" to ");
+    Serial.println(ncube[i]);
   }
   pixels.show();
 }
