@@ -165,7 +165,7 @@ const int bottomPin=8;
 
 void setup() {
   //BLE Setup
-    while (!Serial);  // required for Flora & Micro
+    //while (!Serial);  // required for Flora & Micro
   delay(500);
 
   Serial.begin(115200);
@@ -264,8 +264,15 @@ void loop() {
 //  else if (leftTurn==HIGH){
     twistFront();
     Serial.println("HERE");
-    displayCube(cube);
+    
   }
+  else if (buttnum==2 &&pressed){
+    twistLeft();
+  }
+  else if (buttnum==5 && pressed){
+    twistTop();
+  }
+  displayCube(cube);
   }
 //  else if (frontTurn==HIGH){
 //    twistFront();
@@ -334,7 +341,7 @@ void loop() {
 void twistLeft(){
    delay(200);
   // this is the shuffle that completes this move.
-  char shuffle[]={1, 6, 7, 4, 5, 15, 20, 8, 9, 10, 11, 12, 13, 14, 21, 19, 16, 17, 18, 22, 2, 3, 23, 24};
+  int shuffle[]={1, 6, 7, 4, 5, 15, 20, 8, 9, 10, 11, 12, 13, 14, 21, 19, 16, 17, 18, 22, 2, 3, 23, 24};
   // a new array to hold the shuffled cube
   char returnArray[24];
   // shuffle
@@ -344,7 +351,7 @@ void twistLeft(){
   }
   // copy back to cube.
   strcpy(cube, returnArray);
-  delay(300);
+  delay(400);
 }
 
 void twistRight(){
@@ -364,7 +371,7 @@ void twistTop(){
     returnArray[i]=cube[shuffle[i]-1];
   }
   strcpy(cube, returnArray);
-  delay(300);
+  delay(400);
 }
 
 void twistBottom(){
@@ -393,7 +400,7 @@ void twistFront(){
   //Serial.println(sizeof(returnArray));
   strcpy(cube, returnArray);
   //Serial.println(cube);
-  //delay(400);
+  delay(400);
 }
 
 void twistBack(){
