@@ -4,8 +4,7 @@ int frontTurn=0;
 int backTurn=0;
 int bottomTurn=0;
 int topTurn=0;
-//int buttnum;
-//bool pressed;
+
 
 /*********************************************************************
  This is an example for our nRF51822 based Bluefruit LE modules
@@ -142,6 +141,48 @@ extern uint8_t packetbuffer[];
                 3   4
                 2   1
  * /
+ *              23  24
+ *              22  21             
+ *              -----
+ *              15  16
+ *              14  13
+ *              -----
+ *      19 20 | 7   8 | 11  12
+ *      18 17 | 6   5 | 10  9
+ *              -----
+ *              3   4
+ *              2   1
+ * 
+ * permutation from old to new numbering
+ * 1 -> 1
+ * 2 -> 2
+ * 3 -> 3
+ * 4 -> 4
+ * 5 -> 5
+ * 6 -> 6
+ * 7 -> 7
+ * 8 -> 8
+ * 9 -> 13
+ * 10 -> 11
+ * 11 -> 10
+ * 12 -> 9
+ * 13 -> 12
+ * 14 -> 16
+ * 15 -> 14
+ * 16 -> 20
+ * 17 -> 17
+ * 18 -> 18
+ * 19 -> 19
+ * 20 -> 15
+ * 21 -> 22
+ * 22 -> 23
+ * 23 -> 24
+ * 24 -> 21
+ * int shuffle[]={1, 2, 10, 11, 8, 5, 6, 7, 9, 13, 14, 12, 20, 17, 15, 16, 4, 18, 19, 3, 21, 22, 23, 24} //twistTop new numbering system
+ * int shuffle[]={2, 3, 4, 1, 9, 10, 7, 8, 23, 24, 11, 12, 13, 14, 15, 16, 5, 6, 19, 20, 21, 22, 17, 18};// twistFront new numbering system 
+ * int shuffle[]={1, 6, 7, 4, 5, 14, 15, 8, 9, 10, 11, 12, 13, 22, 23, 16, 20, 17, 18, 19, 21, 2, 3, 24}; // twistLeft new numbering system 
+ * 
+ * 
  */// NeoPixel Ring simple sketch (c) 2013 Shae Erisson
 // released under the GPLv3 license to match the rest of the AdaFruit NeoPixel library
 
@@ -151,7 +192,9 @@ extern uint8_t packetbuffer[];
 // example for more information on possible values.
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 // an array to keep track of the colors.
-char cube[] ={'r', 'r', 'r', 'r', 'w', 'w', 'w', 'w', 'o',  'y', 'y', 'y', 'y', 'o','o', 'g', 'g', 'g', 'g', 'o', 'b', 'b', 'b', 'b'};
+//char cube[] ={'r', 'r', 'r', 'r', 'w', 'w', 'w', 'w', 'o',  'y', 'y', 'y', 'y', 'o','o', 'g', 'g', 'g', 'g', 'o', 'b', 'b', 'b', 'b'}; // old numbering system
+char cube[] ={'r', 'r', 'r', 'r', 'w', 'w', 'w', 'w', 'o',  'o', 'o', 'o', 'y', 'y','y', 'y', 'g', 'g', 'g', 'g', 'b', 'b', 'b', 'b'}; // new numbering system
+
 //char cube[] ={'o', 'o', 'y', 'y', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r','r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r','r'};
 
 // pins for the switches
@@ -339,9 +382,11 @@ void loop() {
 // code to twist a cube on the left all twist codes work the same way. It shuffles the values of cube, and then string copies it 
 // back to cube. (arduino is tough with arrays).
 void twistLeft(){
-   delay(200);
+   //delay(200);
   // this is the shuffle that completes this move.
-  int shuffle[]={1, 6, 7, 4, 5, 15, 20, 8, 9, 10, 11, 12, 13, 14, 21, 19, 16, 17, 18, 22, 2, 3, 23, 24};
+  //int shuffle[]={1, 6, 7, 4, 5, 15, 20, 8, 9, 10, 11, 12, 13, 14, 21, 19, 16, 17, 18, 22, 2, 3, 23, 24}; // old numbering system 
+  int shuffle[]={1, 6, 7, 4, 5, 14, 15, 8, 9, 10, 11, 12, 13, 22, 23, 16, 20, 17, 18, 19, 21, 2, 3, 24}; // new numbering system 
+
   // a new array to hold the shuffled cube
   char returnArray[24];
   // shuffle
@@ -355,7 +400,7 @@ void twistLeft(){
 }
 
 void twistRight(){
-  int shuffle[]={5, 2, 3, 8, 9, 6, 7, 14, 24, 13, 10, 11, 12, 23, 15, 16, 17, 18, 19, 20, 21, 22, 1, 4};
+  int shuffle[]={5, 2, 3, 8, 9, 6, 7, 14, 24, 13, 10, 11, 12, 23, 15, 16, 17, 18, 19, 20, 21, 22, 1, 4};//old numbering
   char returnArray[24];
   for (int i=0; i<NUMPIXELS; i++){
     returnArray[i]=cube[shuffle[i]-1];
@@ -364,8 +409,9 @@ void twistRight(){
 }
 
 void twistTop(){
-  delay(200);
-  int shuffle[]={1, 2, 11, 10, 8, 5, 6, 7, 16, 15, 9, 12, 13, 14, 17, 3, 4, 18, 19, 20, 21, 22, 23, 24};
+  //delay(200);
+  //int shuffle[]={1, 2, 11, 10, 8, 5, 6, 7, 16, 15, 9, 12, 13, 14, 17, 3, 4, 18, 19, 20, 21, 22, 23, 24};//old numbering system
+  int shuffle[]={1, 2, 10, 11, 8, 5, 6, 7, 9, 13, 14, 12, 20, 17, 15, 16, 4, 18, 19, 3, 21, 22, 23, 24} //twistTop new numbering system
   char returnArray[24];
   for (int i=0; i<NUMPIXELS; i++){
     returnArray[i]=cube[shuffle[i]-1];
@@ -375,7 +421,7 @@ void twistTop(){
 }
 
 void twistBottom(){
-  int shuffle[]={13, 12, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 20, 19, 15, 16, 17, 1, 2, 18, 22, 23, 24, 21};
+  int shuffle[]={13, 12, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 20, 19, 15, 16, 17, 1, 2, 18, 22, 23, 24, 21}; // old numbering
   char returnArray[24];
   for (int i=0; i<NUMPIXELS; i++){
     returnArray[i]=cube[shuffle[i]-1];
@@ -385,7 +431,9 @@ void twistBottom(){
 
 void twistFront(){
   //delay(200);
-  int shuffle[]={2, 3, 4, 1, 12, 11, 7, 8, 9, 10, 23, 22, 13, 14, 15, 16, 5, 6, 19, 20, 21, 17, 18, 24};
+  
+  //int shuffle[]={2, 3, 4, 1, 12, 11, 7, 8, 9, 10, 23, 22, 13, 14, 15, 16, 5, 6, 19, 20, 21, 17, 18, 24};// twistFront old numbering system 
+  int shuffle[]={2, 3, 4, 1, 9, 10, 7, 8, 23, 24, 11, 12, 13, 14, 15, 16, 5, 6, 19, 20, 21, 22, 17, 18} //twistFront new numbering system
   //char shuffle[]={ 24, 2, 3, 4,  5,  6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 1};
   
   char returnArray[24];
@@ -405,7 +453,7 @@ void twistFront(){
 
 void twistBack(){
   // this is the shuffle that completes this move
-  int shuffle[]={1, 2, 3, 4, 5, 6, 10, 13, 14, 24, 11, 12, 21, 20, 9, 8, 17, 18, 7, 15, 16, 22, 23, 19};
+  int shuffle[]={1, 2, 3, 4, 5, 6, 10, 13, 14, 24, 11, 12, 21, 20, 9, 8, 17, 18, 7, 15, 16, 22, 23, 19}; // old numbering
   char returnArray[24];
   for (int i=0; i<NUMPIXELS; i++){
     returnArray[i]=cube[shuffle[i]-1];
